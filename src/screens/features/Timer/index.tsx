@@ -5,6 +5,7 @@ import {paddingSize} from 'utils/sizes';
 import {Countdown} from 'screens/Components/Countdown';
 import {RoundedButton} from 'screens/Components/RoundedButton';
 import {Timing} from 'screens/features/Timer/timing';
+// import KeepAwake from 'react-native-keep-awake';
 
 const DEFAULT_TIME = 0.1;
 
@@ -15,6 +16,11 @@ export const Timer = ({focusSubject, clearSubject, onTimerEnd}) => {
 
   const onProgress = (progress: number) => {
     setProgress(progress);
+    //   if (progress > 0) {
+    //     KeepAwake.activate();
+    //   } else {
+    //     KeepAwake.deactivate();
+    //   }
   };
 
   const onEnd = () => {
@@ -42,6 +48,7 @@ export const Timer = ({focusSubject, clearSubject, onTimerEnd}) => {
         <Text style={styles.title}>Focusing on :</Text>
         <Text style={styles.task}>{focusSubject}</Text>
       </View>
+
       <ProgressBar progress={progress} color="#5E84E2" style={{height: 20}} />
       <View style={styles.buttonWrapper}>
         <Timing onchangeTime={changeTime} />
@@ -59,6 +66,7 @@ export const Timer = ({focusSubject, clearSubject, onTimerEnd}) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {flex: 1},
   timerContainer: {
