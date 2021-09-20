@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Platform, AsyncStorage} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
 import {Focus} from 'screens/features/Focus';
 import {Timer} from 'screens/features/Timer';
 import {paddingSize} from 'utils/sizes';
 import {FocusHistory} from 'screens/features/Focus/focusHistory';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const INDEX = {
   complete: 'complete',
@@ -15,12 +16,41 @@ export default function App() {
   const [focusHistory, setFocusHistory] = useState([]); //storing the user input as focusHistory as creating state as an empty array;
 
   const addFocusHistorySubjectWithState = (SUBJECT: string, INDEX: string) => {
-    setFocusHistory([...focusHistory, {SUBJECT, INDEX}]);
+    setFocusHistory([
+      ...focusHistory,
+      {key: String(focusHistory.length + 1), SUBJECT, INDEX},
+    ]);
   };
   const onClear = () => {
     setFocusHistory([]);
   };
-  console.log(focusHistory);
+  const saveFocusHistory = async () => {
+    try {
+      await AsyncStorage.setItem('focusHistory', JSON.stringify(focusHistory)); //JSON.stringify allows us to save focusHistory
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  console.log(saveFocusHistory);
+
+  const loadFocusHistory = async () => {
+    try {
+      const history = await AsyncStorage.getItem('focusHistory');
+      if (history && JSON.parse(history).length) {
+        setFocusHistory(JSON.parse(history));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  console.log(loadFocusHistory);
+  useEffect(() => {
+    loadFocusHistory();
+  }, []);
+
+  useEffect(() => {
+    saveFocusHistory();
+  }, [focusHistory]);
   return (
     <View style={styles.container}>
       {focusSubject ? (

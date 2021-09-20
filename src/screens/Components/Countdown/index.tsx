@@ -13,13 +13,13 @@ export const Countdown = ({minutes = 20, isPaused, onProgress, onEnd}) => {
   const countDown = () => {
     setmillis(time => {
       if (time === 0) {
-        clearInterval(interval.current);
         onEnd();
+
+        clearInterval(interval.current);
         return time;
       }
       const timeLeft = time - 1000;
       //report the progress
-      onProgress(timeLeft / minutesTomillis(minutes));
       return timeLeft;
     });
   };
@@ -29,14 +29,17 @@ export const Countdown = ({minutes = 20, isPaused, onProgress, onEnd}) => {
   }, [minutes]);
 
   useEffect(() => {
+    onProgress(milllis / minutesTomillis(minutes));
+  }, [milllis]);
+
+  useEffect(() => {
     if (isPaused) {
       if (interval.current) clearInterval(interval.current);
       return;
-    } else {
-      interval.current = setInterval(countDown, 1000);
-      return () => clearInterval(interval.current);
     }
-  }, [countDown, isPaused]);
+    interval.current = setInterval(countDown, 1000);
+    return () => clearInterval(interval.current);
+  }, [isPaused]);
 
   const minute = Math.floor(milllis / 1000 / 60) % 60;
   const seconds = Math.floor(milllis / 1000) % 60;
